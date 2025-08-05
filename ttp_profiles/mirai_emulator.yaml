@@ -1,0 +1,22 @@
+# ttp_profiles/mirai_emulator.yaml
+name: Mirai Emulator
+
+actions:
+  - type: scan
+    ports: [23, 2323]
+    targets: ["192.168.1.0/24", "192.168.100.0/24"]
+
+  - type: brute_force
+    protocol: telnet
+    creds:
+      - "admin:admin"
+      - "root:1234"
+      - "user:password"
+      - "admin:123456"
+
+  - type: drop
+    filename: "/tmp/mirai_arm"
+
+  - type: report
+    format: infected_hosts
+

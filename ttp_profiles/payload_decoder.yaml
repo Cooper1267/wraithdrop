@@ -1,0 +1,7 @@
+# ttp_profiles/payload_decoder.yaml
+name: Stage Two Payload Decoder
+
+actions:
+  - type: decrypt_payload
+    filename: stage2_payload.enc
+

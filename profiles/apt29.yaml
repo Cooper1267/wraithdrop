@@ -1,0 +1,5 @@
+name: apt29 Recon Profile
+description: Runs basic fingerprinting
+steps:
+  - recon.basic_fingerprint
+

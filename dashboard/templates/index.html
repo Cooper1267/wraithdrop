@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>WraithDrop Dashboard</title>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <style>
+    body { font-family: monospace; background: #101010; color: #ccc; padding: 1rem; }
+    h2 { margin-top: 2rem; border-bottom: 1px solid #444; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 6px 10px; border: 1px solid #333; }
+    th { background-color: #222; color: #fff; }
+    tr:hover { background-color: #202020; }
+    .detected { color: #ff6b6b; font-weight: bold; }
+    .clean { color: #88ff88; font-weight: bold; }
+    .log-table { margin-bottom: 2rem; }
+  </style>
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+</head>
+<body>
+  <h1>🧭 WraithDrop Telemetry Dashboard (Grouped by Host)</h1>
+
+  <div id="log-container">
+    {% for host, entries in grouped_logs.items() %}
+      <div class="host-group" id="host-{{ host }}">
+        <h2>🖥️ Host: {{ host }}</h2>
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Profile</th>
+              <th>Event</th>
+              <th>Details</th>
+              <th>Verdict</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for entry in entries %}
+              <tr>
+                <td>{{ entry.timestamp }}</td>
+                <td>{{ entry.profile }}</td>
+                <td>{{ entry.event }}</td>
+                <td>
+                  {% if entry.details %}
+                    {{ entry.details | tojson }}
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+                <td>
+                  {% if entry.result == 'detected' %}
+                    <span class="detected">⚠️ DETECTED</span>
+                  {% elif entry.result == 'clean' %}
+                    <span class="clean">✔️ CLEAN</span>
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endfor %}
+  </div>
+
+  <script>
+    const socket = io();
+    socket.on('new_log', function(entry) {
+      const host = entry.host || "unknown";
+      const hostId = `host-${host}`;
+      let hostDiv = document.getElementById(hostId);
+
+      if (!hostDiv) {
+        // New host block
+        hostDiv = document.createElement('div');
+        hostDiv.className = 'host-group';
+        hostDiv.id = hostId;
+        hostDiv.innerHTML = `
+          <h2>🖥️ Host: ${host}</h2>
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Profile</th>
+                <th>Event</th>
+                <th>Details</th>
+                <th>Verdict</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        `;
+        document.getElementById('log-container').appendChild(hostDiv);
+      }
+
+      const tbody = hostDiv.querySelector('tbody');
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${entry.timestamp}</td>
+        <td>${entry.profile || '-'}</td>
+        <td>${entry.event}</td>
+        <td>${entry.details ? JSON.stringify(entry.details) : '-'}</td>
+        <td>${
+          entry.result === 'detected' 
+            ? '<span class="detected">⚠️ DETECTED</span>' 
+            : entry.result === 'clean' 
+              ? '<span class="clean">✔️ CLEAN</span>' 
+              : '-'
+        }</td>
+      `;
+
+      tbody.prepend(tr);  // Add newest at the top
+    });
+  </script>
+</body>
+</html>
+

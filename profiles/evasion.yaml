@@ -1,0 +1,31 @@
+name: evasive_ttp_sequence
+description: A set of TTPs designed for stealth and sandbox evasion.
+steps:
+  - module: evasion.sleep_random
+    config:
+      min_seconds: 3
+      max_seconds: 12
+
+  - module: evasion.check_vm_processes
+    config:
+      keywords:
+        - vbox
+        - vmtoolsd
+        - qemu
+        - xenservice
+
+  - module: evasion.sandbox_artifact_check
+    config:
+      artifacts:
+        - C:\\windows\\system32\\drivers\\vmmouse.sys
+        - /etc/init.d/vboxadd
+
+  - module: evasion.hide_window
+    config:
+      window_title: "cmd.exe"
+
+  - module: evasion.schedule_delayed_task
+    config:
+      delay_minutes: 5
+      command: "echo Wraith evasion complete"
+

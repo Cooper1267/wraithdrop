@@ -1,0 +1,24 @@
+# ttp_profiles/stuxnet_lite.yaml
+name: Stuxnet Lite
+
+actions:
+  - type: detect_env
+    exit_on_detection: true
+
+  - type: scan
+    targets: ["192.168.1.0/24"]
+    ports: [445, 502]
+
+  - type: brute_force
+    protocol: smb
+    creds:
+      - admin:1234
+      - guest:guest
+      - root:toor
+
+  - type: drop
+    filename: worm_payload.exe
+
+  - type: report
+    format: stuxnet_stage1
+

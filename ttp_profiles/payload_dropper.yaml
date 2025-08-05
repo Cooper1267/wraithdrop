@@ -1,0 +1,11 @@
+# ttp_profiles/payload_dropper.yaml
+name: Stage One Payload Dropper
+
+actions:
+  - type: detect_env
+    exit_on_detection: true
+
+  - type: drop_enc
+    filename: stage2_payload.enc
+    payload: "RAT_STAGER_v1"
+

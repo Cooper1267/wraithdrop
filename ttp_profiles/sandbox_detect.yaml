@@ -1,0 +1,16 @@
+# ttp_profiles/sandbox_detect.yaml
+name: Sandbox Detection Routine
+
+actions:
+  - type: detect_env
+    checks:
+      - cpu_count
+      - username
+      - sleep_timing
+      - mac_prefix
+      - processes
+    exit_on_detection: true
+
+  - type: report
+    format: sandbox_status
+
