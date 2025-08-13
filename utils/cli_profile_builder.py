@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 import yaml
 
 class CLIProfileBuilder:
@@ -12,24 +13,35 @@ class CLIProfileBuilder:
             for file in files:
                 if file.endswith(".py"):
                     rel_path = os.path.relpath(os.path.join(root, file), self.modules_path)
-                    step = rel_path.replace("\\", ".").replace("/", ".").replace(".py", "")
+                    # Use os.sep for robustness, then replace with dots
+                    step = rel_path.replace(os.sep, ".").replace(".py", "")
                     steps.append(step)
         return steps
 
     def validate_steps(self, steps):
         available = set(self.list_available_ttps())
-        return [s for s in steps if s in available]
+        valid = [s for s in steps if s in available]
+        invalid = [s for s in steps if s not in available]
+        return valid, invalid
+
+    def sanitize_filename(self, name):
+        # Replace all non-alphanumeric, dash, underscore, or dot with underscore
+        return re.sub(r"[^a-zA-Z0-9._-]", "_", name)
 
     def build_profile(self, name, steps, output_path="profiles"):
-        valid_steps = self.validate_steps(steps)
+        valid_steps, invalid_steps = self.validate_steps(steps)
+        if not valid_steps:
+            raise ValueError("No valid steps were provided. Aborting profile creation.")
         profile = {
             "name": name,
             "steps": valid_steps
         }
         os.makedirs(output_path, exist_ok=True)
-        with open(os.path.join(output_path, f"{name}.yaml"), "w") as f:
-            yaml.dump(profile, f)
-        return os.path.join(output_path, f"{name}.yaml")
+        safe_name = self.sanitize_filename(name)
+        profile_path = os.path.join(output_path, f"{safe_name}.yaml")
+        with open(profile_path, "w") as f:
+            yaml.dump(profile, f, default_flow_style=False)
+        return profile_path, invalid_steps
 
 def load_profile(path):
     if not os.path.isfile(path):
@@ -44,9 +56,15 @@ def main():
 
     args = parser.parse_args()
     builder = CLIProfileBuilder()
-    profile_path = builder.build_profile(args.name, args.steps)
-    print(f"Profile saved to {profile_path}")
+    try:
+        profile_path, invalid_steps = builder.build_profile(args.name, args.steps)
+        print(f"Profile saved to {profile_path}")
+        if invalid_steps:
+            print("Warning: The following steps were not found and were not included in the profile:")
+            for step in invalid_steps:
+                print(f"  - {step}")
+    except ValueError as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
-
