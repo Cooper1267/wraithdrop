@@ -1,4 +1,4 @@
-name: evasive_ttp_sequence
+name: evasion
 description: A set of TTPs designed for stealth and sandbox evasion.
 steps:
   - module: evasion.sleep_random
