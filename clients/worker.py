@@ -2,6 +2,7 @@
 import requests
 import time
 import os
+from datetime import datetime
 from server.emulator import Emulator
 from utils.host_fingerprint import fingerprint
 
@@ -10,10 +11,14 @@ PROFILE_DIR = "ttp_profiles"
 
 host_fp = fingerprint()
 
-log _telemetry({
-    "event":"host_fingerprint",
-    "profiles":"system_boot",
-    "details":host_fp,
+def log_telemetry(data):
+    # Placeholder for telemetry logging, could be sending to server, logging, etc.
+    print(f"[TELEMETRY] {data}")
+
+log_telemetry({
+    "event": "host_fingerprint",
+    "profiles": "system_boot",
+    "details": host_fp,
     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 })
 
@@ -44,4 +49,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
