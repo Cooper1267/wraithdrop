@@ -18,16 +18,33 @@ def unpad(s):
 
 def encrypt(data: dict) -> str:
     raw = pad(json.dumps(data)).encode()
+    print(f"[DEBUG] Raw to encrypt: {raw}")
     iv = get_random_bytes(16)
+    print(f"[DEBUG] IV: {iv.hex()}")
     cipher = AES.new(KEY, AES.MODE_CBC, iv)
     encrypted = cipher.encrypt(raw)
-    return base64.b64encode(iv + encrypted).decode()
+    print(f"[DEBUG] Encrypted bytes: {encrypted.hex()}")
+    out = base64.b64encode(iv + encrypted).decode()
+    print(f"[DEBUG] Base64 output: {out}")
+    return out
 
 def decrypt(ciphertext: str) -> dict:
+    print(f"[DEBUG] Ciphertext input: {ciphertext}")
     data = base64.b64decode(ciphertext)
     iv = data[:16]
+    print(f"[DEBUG] IV: {iv.hex()}")
     encrypted = data[16:]
+    print(f"[DEBUG] Encrypted bytes: {encrypted.hex()}")
     cipher = AES.new(KEY, AES.MODE_CBC, iv)
     decrypted = cipher.decrypt(encrypted)
-    return json.loads(unpad(decrypted.decode()))
+    print(f"[DEBUG] Decrypted bytes: {decrypted}")
+    json_data = unpad(decrypted.decode())
+    print(f"[DEBUG] Unpadded: {json_data}")
+    return json.loads(json_data)
 
+if __name__ == "__main__":
+    test_data = {"foo": "bar"}
+    ct = encrypt(test_data)
+    print(f"[DEBUG] Encrypted: {ct}")
+    pt = decrypt(ct)
+    print(f"[DEBUG] Decrypted: {pt}")
