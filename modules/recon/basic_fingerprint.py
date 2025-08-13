@@ -1,4 +1,3 @@
-import os
 from utils.payload_runner import PayloadRunner
 
 def run(dry_run=False):
@@ -11,11 +10,17 @@ def run(dry_run=False):
     ]
 
     for name, method in payloads:
-        results[name] = method()
+        try:
+            print(f"[DEBUG] Running payload: {name}")
+            result = method()
+            print(f"[DEBUG] Payload {name} result: {result}")
+            results[name] = result
+        except Exception as e:
+            print(f"[ERROR] Exception while executing payload '{name}': {e}")
+            results[name] = f"Error: {e}"
 
     return {
         "module": "basic_fingerprint",
         "payloads_executed": [name for name, _ in payloads],
         "results": results
     }
-
