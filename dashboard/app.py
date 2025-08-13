@@ -17,7 +17,10 @@ LOG_DIR = "../logs"
 
 def load_logs():
     logs = []
+    abs_log_dir = os.path.abspath(LOG_DIR)
+    print(f"[DEBUG] Log directory: {abs_log_dir}")
     if not os.path.exists(LOG_DIR):
+        print(f"[WARNING] Log directory does not exist: {abs_log_dir}")
         return logs
 
     for fname in sorted(os.listdir(LOG_DIR)):
@@ -28,9 +31,11 @@ def load_logs():
                         parsed = json.loads(line.strip())
                         if isinstance(parsed, dict):
                             logs.append(parsed)
-                    except json.JSONDecodeError:
+                    except json.JSONDecodeError as e:
+                        print(f"[ERROR] Could not parse line in {fname}: {e}")
                         continue
     logs.sort(key=lambda x: x.get("timestamp") if isinstance(x, dict) else "", reverse=True)
+    print(f"[DEBUG] Loaded {len(logs)} log entries.")
     return logs
 
 def group_by_host(logs):
@@ -46,7 +51,10 @@ def group_by_host(logs):
             host = entry.get("host")
         if not host:
             host = "unknown"
+            print(f"[DEBUG] Log entry missing host: {entry}")
         grouped[host].append(entry)
+    for host, entries in grouped.items():
+        print(f"[DEBUG] {host}: {len(entries)} logs")
     return grouped
 
 @app.route("/")
@@ -59,7 +67,12 @@ def index():
 def api_grouped_logs():
     logs = load_logs()
     grouped = group_by_host(logs)
-    return jsonify(grouped)
+    try:
+        return jsonify(grouped)
+    except TypeError as e:
+        # JSON serialization error, log which host/log entry caused it
+        print(f"[ERROR] Could not jsonify grouped logs: {e}")
+        return jsonify({"error": "Could not serialize logs"}), 500
 
 def watch_logs():
     seen = set()
@@ -76,6 +89,7 @@ def watch_logs():
             uid = f"{timestamp}_{event}_{profile}"
             if uid not in seen:
                 seen.add(uid)
+                print(f"[DEBUG] Emitting new log: {uid}")
                 socketio.emit("new_log", log)
         eventlet.sleep(2)
 
@@ -84,6 +98,6 @@ def handle_connect():
     print("[🔌] Client connected.")
 
 if __name__ == "__main__":
+    print("[INFO] Starting SocketIO background log watcher...")
     socketio.start_background_task(watch_logs)
     socketio.run(app, host="0.0.0.0", port=7000, debug=True)
-
